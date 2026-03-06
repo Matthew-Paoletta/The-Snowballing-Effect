@@ -1,6 +1,6 @@
 # League of Legends - Snowballing Effect
 
-**Name:** Matthew Paoletta
+**Name:** Matthew Paoletta <br>
 **PID:** A17442366
 
 ## Project Overview
