@@ -220,6 +220,10 @@ Does getting **first blood** (the first kill) actually help teams win?
 
 **Features we CAN'T use:** Anything from after 15 minutes like final game length or end-game objectives
 
+### Methodology
+
+All models use an **80/20 train-test split** (random_state=42) to ensure reproducibility. The training set contains ~135,000 team records, while the test set has ~34,000 records for unbiased evaluation.
+
 ---
 
 ## Baseline Model
@@ -294,6 +298,32 @@ I also upgraded to a **Random Forest** algorithm (50 trees, max depth 10), which
 
 *The final model gets 75.3% accuracy – up from 74.8% in the baseline.*
 
+### Hyperparameter Tuning
+
+Used **GridSearchCV with 3-fold cross-validation** to systematically test:
+- `max_depth`: [10, 20]
+- `n_estimators`: [50, 100]
+
+**Best parameters:** max_depth=10, n_estimators=50
+
+Shallower trees (depth 10) prevent overfitting better than deeper trees, and 50 trees provide sufficient ensemble stability without excessive computation.
+
+### Confusion Matrix
+
+|              | Predicted Loss | Predicted Win |
+|:-------------|---------------:|--------------:|
+| Actual Loss  |         12,631 |         4,185 |
+| Actual Win   |          4,168 |        12,798 |
+
+<iframe
+  src="assets/confusion-matrix.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+**Error Analysis:** The model makes mistakes fairly evenly – 4,185 false positives (predicted win but lost) vs. 4,168 false negatives (predicted loss but won). This balance shows no systematic bias toward over-predicting wins or losses.
+
 ### Why It's Better
 
 Three reasons:
@@ -363,6 +393,27 @@ League of Legends changes constantly – new champions, items, balance patches. 
 - Jungle/objective reworks
 
 The model learned patterns from modern League, so it works better on modern data. For future predictions, be aware that continued game evolution may impact accuracy.
+
+---
+
+## Limitations
+
+While the model achieves 75.3% accuracy, several factors remain outside its scope:
+
+**What the model CAN'T capture:**
+- **Team composition** – Champion picks, team synergies, and draft strategies
+- **Player form** – Individual skill levels, fatigue, or momentum from previous matches
+- **Meta shifts** – Patch changes that alter champion/item balance
+- **Macro strategy** – Late-game shotcalling, teamfight execution, or comeback mechanics
+- **Intangibles** – Mental resilience, roster changes, or tournament pressure
+
+The model only sees 15-minute statistics. A team might be behind in gold but have a superior team composition for late-game scaling, or they might have a star player who carries teamfights. These hidden factors explain why 1 in 4 games still defy early predictions.
+
+**Future improvements could incorporate:**
+- Champion pick/ban data
+- Player rating systems (Elo/MMR)
+- Historical head-to-head records
+- Patch version information
 
 ---
 
