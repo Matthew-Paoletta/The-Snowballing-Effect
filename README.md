@@ -135,16 +135,27 @@ Here's a glimpse of the cleaned dataset:
 
 **What could make this MAR instead?** If we had game patch info, tournament organizer details, or data collection system versions, we could explain the missingness through observable factors.
 
-### Missingness Dependency
+### Missingness Dependency: Permutation Tests
 
-**Good news:** All the critical 15-minute stats (`golddiffat15`, `xpdiffat15`, `csdiffat15`, `killsat15`, `assistsat15`, `deathsat15`) are 100% complete after cleaning. No missing values!
+To understand whether missingness patterns are random or systematic, I ran two formal permutation tests on **`turretplates`** (51% missing):
 
-The missing data that does exist:
-- Player-level columns (100% missing by design – we only kept team data)
-- Features from later game versions (51-97% missing)
-- Rare mechanics like dragon types (96% missing)
+**Test 1: Does `turretplates` missingness depend on `year`?**
 
-None of this affects our prediction task.
+- **Expected:** YES – turret plates were introduced in 2019, so older games shouldn't have this data
+- **Test statistic:** Total Variation Distance (TVD) between year distributions
+- **Result:** p < 0.001 → **DOES depend on year**
+- **Conclusion:** Missingness is MAR (Missing At Random) – entirely explained by when the game was played
+
+**Test 2: Does `turretplates` missingness depend on `result` (win/loss)?**
+
+- **Expected:** NO – whether data is missing shouldn't relate to who won
+- **Test statistic:** Absolute difference in missingness rates
+- **Result:** p > 0.05 → **Does NOT depend on result**
+- **Conclusion:** Missingness is unrelated to game outcomes
+
+These tests confirm that features missing due to game evolution (like turret plates) can be safely handled – the missingness doesn't bias our win/loss predictions.
+
+**Bottom line:** All critical 15-minute stats (`golddiffat15`, `xpdiffat15`, `csdiffat15`, `killsat15`, `assistsat15`, `deathsat15`) are 100% complete. Our prediction model has the data it needs.
 
 ---
 
