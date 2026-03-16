@@ -234,9 +234,9 @@ For the baseline model, I used **Logistic Regression** to predict match outcomes
 
 **Features:**
 1. **`golddiffat15`** – Gold difference at 15 minutes (already numeric)
-2. **`firstblood`** – Did the team get the first kill? (converted True/False to 1/0)
+2. **`xpdiffat15`** – Experience point difference at 15 minutes (already numeric)
 
-Why these two? They're the most obvious early advantages: gold = better items, first blood = early momentum.
+Why these two? They're the most fundamental economic advantages: gold = better items, experience = level advantages and stronger abilities.
 
 ### Performance
 
